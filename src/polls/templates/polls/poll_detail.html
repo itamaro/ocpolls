@@ -1,14 +1,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<meta charset="utf-8" />
     <script>
     var data = {{object.json_proposals|safe}};
     console.log(data);
     </script>
     
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  
+	<script type="text/javascript" src="/static/script.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="/static/style.css" />
+		
+    
+    
+    <div style="height:50px;"></div>
+
+	<div dir="rtl">
+		<ul id="listDefault" class="dropList">
+		<!-- 
+			<li id="1" class="ui-state-default"><div class="grab"></div>
+				<div style="display: inline-block;">סקירת מנכ"ל חודשית</div>
+			</li>
+			<li id="2" class="ui-state-default"><div class="grab"></div>הצגת סטטוס פרויקטים רבעוני</li>
+			<li id="3" class="ui-state-default"><div class="grab"></div>התקדמות בתוכנית העבודה</li>
+			<li id="4" class="ui-state-default"><div class="grab"></div>מעבר על יעדים</li>
+			<li id="5" class="ui-state-default"><div class="grab"></div>אבני דרך חוזיות</li>
+			<li id="6" class="ui-state-default"><div class="grab"></div>נוהל קבלת חבר לעמותה על סמך תרומה לקהילה</li>
+			<li id="7" class="ui-state-default"><div class="grab"></div>מערכת דיווח עצמי למתנדברים</li>
+			<li id="8" class="ui-state-default"><div class="grab"></div>תרומות לסדנא</li>
+			<li id="9" class="ui-state-default"><div class="grab"></div>סקר שביעות רצון מתנדבים</li>
+			<li id="10" class="ui-state-default"><div class="grab"></div>הקמת advisory board</li>
+			<li id="11" class="ui-state-default"><div class="grab"></div>הגדרת מדד בת"ע - פרויקטים שקופים</li>
+			<li id="12" class="ui-state-default"><div class="grab"></div>הגדרת ועדות משנה בועד</li>
+			<li id="13" class="ui-state-default"><div class="grab"></div>מדדי הצלחה של פרויקטים</li>
+			<li id="14" class="ui-state-default"><div class="grab"></div>הפעלת hackerspace לאורך השבוע</li>
+			<li id="15" class="ui-state-default"><div class="grab"></div>הוספת כמות הזמן שהושקע לתיאור הפרויקטים</li>
+			<li id="16" class="ui-state-default"><div class="grab"></div>הגדרת מדדים כמיתים להשפעה כדי להראות החזר השקעה</li>
+			<li id="17" class="ui-state-default"><div class="grab"></div>שיפור תוכנית העבודה</li>
+			<li id="18" class="ui-state-default"><div class="grab"></div>הגדרת תוכנית אסטרטגית ארוכת טווח</li>
+			<li id="19" class="ui-state-default"><div class="grab"></div>פרסום החלטות הועד לגבי עמותת המקור</li>
+			 -->
+		</ul>
+	</div>
+    
+    
+    
+    
+    
+    
+    
     <form method="post">
-        <textarea name="vote"></textarea>
+        <input type="hidden" name="vote" id="hiddenVote"></textarea>
         {% csrf_token %}
-        <input type="submit">
+        <input type="submit" id="btnSubmit" value="Schulze The Madafaka" />
     </form>
 {% endblock %}

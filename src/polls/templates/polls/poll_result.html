@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Result</h1>
+    <ul>
+    {% for r in object.calculate_result %}
+      <li>[{{forloop.counter0}}] {{r}}</li>
+    {% endfor %}</ul>
+    <h1>Votes</h1>
+    <ul>
+    {% for v in object.votes.all %}
+      <li>
+          {% for g in v.as_stringlist %}
+            [{{g|join:', '}}]
+          {% endfor %}
+      </li>
+    {% endfor %}</ul>
+{% endblock %}

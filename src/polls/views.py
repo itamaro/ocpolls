@@ -1,5 +1,6 @@
 # Create your views here.
 from django.http.response import HttpResponse
+from django.shortcuts import redirect
 from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, CreateView
@@ -24,4 +25,9 @@ class PollView(DetailView):
         o = Vote(poll=self.get_object())
         o.data = json.loads(request.POST['vote'])
         o.save()
-        return HttpResponse("OK")
+        return redirect(o.poll.get_result_url())
+
+
+class ResultView(DetailView):
+    model = Poll
+    template_name = "polls/poll_result.html"

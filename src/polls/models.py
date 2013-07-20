@@ -21,11 +21,18 @@ class Poll(models.Model):
     def get_absolute_url(self):
         return 'poll', (str(self.id),)
 
+    @models.permalink
+    def get_result_url(self):
+        return 'poll_result', (str(self.id),)
+
     def json_proposals(self):
         return json.dumps(self.proposals)
+
 
 class Vote(models.Model):
     poll = models.ForeignKey(Poll, related_name='votes')
     created_at = models.DateTimeField(auto_now_add=True)
     data = JSONField()
 
+    def as_stringlist(self):
+        return [[self.poll.proposals[i] for i in x] for x in self.data]

@@ -1,0 +1,43 @@
+body{
+	background: #f7f7f7;
+	margin:0px;
+	overflow-x:hidden;
+	overflow-y:scroll;
+	font-family: arial;
+}
+
+
+
+ul.dropList{
+	background:white;
+	border:solid 1px #ececec;
+	padding:4px;
+	margin:4px 0px;
+}
+
+ul.dropList li{
+	background:#448698;
+	border:solid 1px #357182;
+	padding:3px;
+	color:white;
+	font-size:13px;
+	margin-bottom:1px;
+	list-style: none;
+	cursor: pointer;
+}
+
+
+ul.dropList.dropAble{
+	background:lightyellow;
+	border:dashed 1px yellow;
+}
+
+
+.grab{
+	width: 25px;
+	height: 30px;
+	background:url('http://oc-dev.modelarity.com/static/m/images/drag-handle.png') center no-repeat;
+	
+	display: inline-block;
+	padding:1px 5px 1px 5px;
+}
