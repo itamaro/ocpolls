@@ -14,8 +14,9 @@ class Poll(models.Model):
         schulze = DynamicSchulze(valid_props)
         for v in self.votes.all():
             schulze.add_vote(v.data)
-        result = schulze.run_schulze()
-        return [set([self.proposals[i] for i in x]) for x in result]
+        order = schulze.get_order()
+        matrix = schulze.get_pairs_matrix()
+        return [set([self.proposals[i] for i in x]) for x in order]
 
     @models.permalink
     def get_absolute_url(self):

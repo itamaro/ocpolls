@@ -1,4 +1,6 @@
+import copy
 from pyvotecore.schulze_pr import SchulzePR
+from pyvotecore.schulze_method import SchulzeMethod
 
 ###################################
 #
@@ -15,21 +17,20 @@ from pyvotecore.schulze_pr import SchulzePR
 # vote = [ [0], [1,2], [2,3] ] # bad
 # vote = [ [0], [1,2], [4] ] # bad
 # vote = [ [4], [1,2], [3] ] # bad
-#
-# To run Schulze algorimth run:
-# print SchulzeMethod(get_schulze_format(votes_list), ballot_notation = "grouping").to_dict()
-
 
 class DynamicSchulze(object):
 
     def __init__(self, candidates):
         self.hist = dict()
-        self.schulze_format = list()
         assert type(candidates) in [list, set, tuple]
         self.candidates = set(candidates)
         self.vote_count = 0
+        self.schulze_method_result = None
+        self.schulze_pr_result = None
 
     def add_vote(self, vote):
+        # Invalidate results cache
+        self.invalidate_cache()
         # verify valid permutation
         perm = sum(vote, [])
         perm.sort()
@@ -57,14 +58,25 @@ class DynamicSchulze(object):
 
     def get_vote_count(self):
         return self.vote_count
+    
+    def validate_cache(self):
+        if self.schulze_method_result is None or self.schulze_pr_result is None:
+            schulze_format = self.get_schulze_format()
+        if self.schulze_method_result is None:
+            self.schulze_method_result = SchulzeMethod(copy.deepcopy(schulze_format), ballot_notation="grouping").as_dict()
+        if self.schulze_pr_result is None:
+            self.schulze_pr_result = SchulzePR(copy.deepcopy(schulze_format), ballot_notation="grouping").as_dict()
+    
+    def invalidate_cache(self):
+        self.schulze_method_result = None
+        self.schulze_pr_result = None
 
-    def run_schulze(self):
-        # return SchulzeMethod(self.get_schulze_format(), ballot_notation = "grouping").as_dict()
-        pr_res = SchulzePR(self.get_schulze_format(), ballot_notation="grouping").as_dict()
+    def get_order(self):
+        self.validate_cache()
         # convert resulting order to ordered sets of tied winners
         seen = set()
         order = list()
-        for winner in pr_res['rounds']:
+        for winner in self.schulze_pr_result['rounds']:
             if winner['winner'] in seen:
                 continue
             tied = set((winner['winner'],))
@@ -73,3 +85,17 @@ class DynamicSchulze(object):
             seen = seen.union(tied)
             order.append(tied)
         return order
+        
+    def get_pairs_matrix(self):
+        self.validate_cache()
+        dim = len(self.candidates)
+        labels = dict()
+        matrix = list()
+        for idx, c in enumerate(self.candidates):
+            labels[c] = idx
+            matrix.append([None] * dim)
+        for pair, count in self.schulze_method_result['pairs'].iteritems():
+            row_id = labels[pair[0]]
+            col_id = labels[pair[1]]
+            matrix[row_id][col_id] = count
+        return labels, matrix
