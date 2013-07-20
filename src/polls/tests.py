@@ -4,39 +4,60 @@ from polls.models import Poll, Vote
 
 class PollTest(TestCase):
 
+    def _test_poll(self, props, votes, result):
+
+        p = Poll.objects.create(proposals=props)
+
+        for v in votes:
+            Vote.objects.create(poll=p, data=v)
+
+        self.assertEquals(len(votes), p.votes.count())
+
+        expected = [set(x) for x in result]
+
+        self.assertEquals(expected, p.calculate_result())
+
+        return p
+
     def test_basic_poll(self):
 
         props = ['Red', 'Blue', 'Green']
 
-        p = Poll.objects.create(proposals=props)
+        votes = (
+            [[0, 1, 2]],
+            [[0], [1, 2]],
+            [[1, 2], [0]],
+            [[2], [1, 0]],
+            [[0, 1, 2]],
+        )
 
-        Vote.objects.create(poll=p, data=[[0, 1, 2]])
-        Vote.objects.create(poll=p, data=[[0], [1, 2]])
-        Vote.objects.create(poll=p, data=[[1, 2], [0]])
-        Vote.objects.create(poll=p, data=[[2], [1, 0]])
-        Vote.objects.create(poll=p, data=[[0, 1, 2]])
+        result = [
+                  ['Green'],
+                  ['Red'],
+                  ['Blue']
+                 ]
 
-        self.assertEquals(5, p.votes.count())
-        self.assertEquals(p.calculate_result(), [set(['Green']), set(['Red']), set(['Blue'])])
+        p = self._test_poll(props, votes, result)
 
     def test_poll_tie(self):
 
         props = ['Red', 'Blue', 'Green']
 
-        p = Poll.objects.create(proposals=props)
+        votes = [
+            [[0, 1, 2]],
+            [[0, 1, 2]],
+            [[0, 1, 2]],
+        ]
 
-        Vote.objects.create(poll=p, data=[[0, 1, 2]])
-        Vote.objects.create(poll=p, data=[[0, 1, 2]])
-        Vote.objects.create(poll=p, data=[[0, 1, 2]])
+        result = [
+                  ['Green', 'Red', 'Blue'],
+                 ]
 
-        self.assertEquals(3, p.votes.count())
-        self.assertEquals(p.calculate_result(), [set(['Green', 'Red', 'Blue'])])
+        p = self._test_poll(props, votes, result)
 
     def test_poll_strange(self):
 
         props = ['A', 'B', 'C', 'D', 'E']
-
-        p = Poll.objects.create(proposals=props)
 
         votes = [
                     [[0, 1, 2, 3, 4]],
@@ -45,9 +66,9 @@ class PollTest(TestCase):
                     [[3], [0, 1, 2, 4]],
                 ]
 
-        for v in votes:
-            Vote.objects.create(poll=p, data=v)
+        result = [
+                  ['D'],
+                  ['A', 'B', 'C', 'E']
+                 ]
 
-        self.assertEquals(len(votes), p.votes.count())
-        self.assertEquals([set(['D']), set(['A','B','C','D'])],
-                               p.calculate_result())
+        p = self._test_poll(props, votes, result)
