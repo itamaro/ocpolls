@@ -32,3 +32,22 @@ class PollTest(TestCase):
         self.assertEquals(3, p.votes.count())
         self.assertEquals(p.calculate_result(), [set(['Green', 'Red', 'Blue'])])
 
+    def test_poll_strange(self):
+
+        props = ['A', 'B', 'C', 'D', 'E']
+
+        p = Poll.objects.create(proposals=props)
+
+        votes = [
+                    [[0, 1, 2, 3, 4]],
+                    [[0], [1, 2, 3, 4]],
+                    [[1, 2, 3, 4], [0]],
+                    [[3], [0, 1, 2, 4]],
+                ]
+
+        for v in votes:
+            Vote.objects.create(poll=p, data=v)
+
+        self.assertEquals(len(votes), p.votes.count())
+        self.assertEquals([set(['D']), set(['A','B','C','D'])],
+                               p.calculate_result())
